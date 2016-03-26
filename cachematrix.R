@@ -1,5 +1,5 @@
 ## These functions attempt to create matrix of the inputs
-## and then takes the inverse (1/x) of the matrix and returns
+## and then takes the inverse of the matrix and returns
 ## either that newly calculated inverted matrix and stores the result
 ## matrix in cache. if result is called on again, cache is returned, else
 ## new calculation returned
@@ -11,15 +11,11 @@ makeCacheMatrix <- function(x = matrix()) {
     x <<- y
     m <<- NULL
   }
-  # checks to see if inputed is vector or matrix
+  # gets the matrix with original values
   get <- function() x
-  if (is.matrix(x)) {
-    #if matrix, set the inverse of the matrix
-    setmatrix <- function(matrix) m <<- 1/x 
-  } else {
-    #if not matrix, convert to matrix and set its invert
-    setmatrix <- function(matrix) m <<- apply(matrix(x), c(1,2), function(x) 1/x) 
-  }
+  # this function sets the inverse
+  setmatrix <- function(matrix) m <<- matrix 
+  # this function gets the solved matrix
   getmatrix <- function() m
   list(set = set, get = get,
        setmatrix = setmatrix,
@@ -32,13 +28,15 @@ makeCacheMatrix <- function(x = matrix()) {
 ## inverted matrix
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  ## Return a matrix that is the inverse of 'x'
   m <- x$getmatrix()
+  # check to see if cached
   if(!is.null(m)) {
     message("getting cached data")
-    return(m)
+    return(m) #return value if cached
   }
   data <- x$get()
-  m <- x$setmatrix(data)
+  m <- solve(data, ...) # pass through solve function for inverse to value
+  x$setmatrix(m)        # set matrix with newly set value
   m
 }
